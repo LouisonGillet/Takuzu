@@ -1,0 +1,6 @@
+- tuto
+- taille de grille
+- gérer les erreurs (ex : mettre en rouge si pas bon)
+- musique
+- visuel
+- timer

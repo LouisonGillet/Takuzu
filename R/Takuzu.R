@@ -14,8 +14,8 @@ ui <- fluidPage(
 
 
 server <- function(input, output, session) {
-  nRows <- 5
-  nCols <- 5
+  nRows <- 6
+  nCols <- 6
 
   rv <- reactiveValues(grille = matrix(NA, nrow = nRows, ncol = nCols))  # Initialisation de la grille avec NA
 
