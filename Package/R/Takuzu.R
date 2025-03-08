@@ -1,15 +1,29 @@
 library(shiny)
-
-
-
+library(shinythemes)
+library(shinyWidgets)
+library(shinyalert)
 
 
 ui <- fluidPage(
-  titlePanel("Jeu Takuzu"),
-  h3("Remplissez la grille avec des 0 et 1"),
+
+  theme = shinytheme("sandstone"),
+
+  titlePanel(
+    h1(
+      strong(
+        em(
+          HTML("<p style='color: #784212;
+                   text-align: center;
+                   font-family: Monaco;'>Takuzu</p>")
+        )
+      ),
+    ),
+
+    windowTitle = "Jeu du Takuzu"
+  ),
+
   uiOutput("grille_boutons")
 )
-
 
 
 
