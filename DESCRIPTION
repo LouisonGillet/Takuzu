@@ -6,4 +6,6 @@ Author: SCAIA MATTEO, GILLET LOUISON
 Maintainer: matteo.scaia@etu.umontpellier.fr louison.gillet@etu.umontpellier.fr
 Description: Ce package contient des fonctions pour résoudre le jeu Takuzu.
 License: 
+Encoding: UTF-8
 Imports:
+RoxygenNote: 7.3.2
