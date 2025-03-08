@@ -30,8 +30,9 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   nRows <- 6
   nCols <- 6
+  niveau = "moyen"
 
-  rv <- reactiveValues(grille = matrix(NA, nrow = nRows, ncol = nCols))  # Initialisation de la grille avec NA
+  rv <- reactiveValues(grille = generer_takuzu(niveau, nRows))  # Initialisation de la grille avec NA
 
   output$grille_boutons <- renderUI({
     boutons <- lapply(1:nRows, function(i) {
