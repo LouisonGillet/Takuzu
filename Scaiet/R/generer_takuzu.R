@@ -11,8 +11,8 @@
 #' @param taille Un entier représentant la taille de la grille (doit être un multiple de 2 entre 4 et 100).
 #'
 #' @return Une matrice `taille x taille` contenant des valeurs `0`, `1` et `NA` (cases vides).
-#' @examples
 #' @export
+#'
 generer_takuzu <- function(niveau, taille) {
   # Vérifier que la taille est valide
   if (!(taille %in% seq(4, 100, 2))) {

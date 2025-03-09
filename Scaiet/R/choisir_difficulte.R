@@ -1,5 +1,6 @@
-#' Choisir le nombre de cases préremplies en fonction de la difficulté
+#' @title Choisir le nombre de cases préremplies en fonction de la difficulté
 #'
+#' @description
 #' Cette fonction détermine combien de cases doivent être préremplies dans une
 #' grille de Takuzu en fonction de la taille et du niveau de difficulté choisi.
 #'
@@ -12,7 +13,7 @@
 #'
 #' @return Un entier correspondant au nombre de cases à préremplir.
 #' @examples
-#' choisir_difficulte(8, "moyen") # Retourne environ 26 cases pour une grille 8x8
+#' Choisir_difficulte(8, "moyen") # Retourne environ 26 cases pour une grille 8x8
 #' @export
 #'
 choisir_difficulte <- function(taille, niveau) {

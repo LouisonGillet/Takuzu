@@ -1,0 +1,13 @@
+Package: Scaiet
+Type: Package
+Title: Jeu du Takuzu
+Version: 0.1.0
+Authors@R: c(
+    person("Matteo", "Scaia", email = "matteo.scaia@etu.umontpellier.fr", role = c("aut", "cre")),
+    person("Louison", "Gillet", email = "louison.gillet@etu.umontpellier.fr", role = c("aut")))
+Description: Ce package permet le lancement du jeu Takuzu.
+License: GPL-3
+Encoding: UTF-8
+Imports: shiny, shinythemes, shinyWidgets, shinyalert
+RoxygenNote: 7.3.2
+
