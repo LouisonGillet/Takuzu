@@ -87,6 +87,15 @@ server <- function(input, output, session) {
       })
     })
   })
+  observeEvent(input$check_grid, {
+    message = verifier_grille(rv$grille)
+    if(message==FALSE){
+      output$result = renderText(" ❌ La grille n'est pas bonne, réessayez !")
+    }
+    if(message==TRUE){
+      output$result = renderText(" 🎉 Bravo, vous avez réussi !")
+    }
+  })
 }
 
 # Lancer l'application
