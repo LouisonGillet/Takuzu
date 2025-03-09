@@ -10,9 +10,9 @@ choisir_difficulte(taille, niveau)
 \item{taille}{Un entier représentant la taille de la grille (doit être un multiple de 2 entre 4 et 100).}
 
 \item{niveau}{Un caractère indiquant le niveau de difficulté. Doit être l'un des suivants :
-- `"facile"` (50% des cases remplies)
-- `"moyen"` (40% des cases remplies)
-- `"difficile"` (30% des cases remplies)
+- `"Facile"` (50% des cases remplies)
+- `"Moyen"` (40% des cases remplies)
+- `"Difficile"` (30% des cases remplies)
 - `"Einstein"` (10% des cases remplies, très difficile)}
 }
 \value{
@@ -21,7 +21,4 @@ Un entier correspondant au nombre de cases à préremplir.
 \description{
 Cette fonction détermine combien de cases doivent être préremplies dans une
 grille de Takuzu en fonction de la taille et du niveau de difficulté choisi.
-}
-\examples{
-Choisir_difficulte(8, "moyen") # Retourne environ 26 cases pour une grille 8x8
 }

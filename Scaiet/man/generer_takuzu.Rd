@@ -2,23 +2,18 @@
 % Please edit documentation in R/generer_takuzu.R
 \name{generer_takuzu}
 \alias{generer_takuzu}
-\title{Générer une grille de Takuzu avec un niveau de difficulté donné}
+\title{Génère une grille Takuzu valide avec un niveau de difficulté donné}
 \usage{
-generer_takuzu(niveau, taille)
+generer_takuzu(taille, niveau)
 }
 \arguments{
-\item{niveau}{Un caractère indiquant le niveau de difficulté. Doit être l'un des suivants :
-- `"facile"` (50% des cases remplies)
-- `"moyen"` (40% des cases remplies)
-- `"difficile"` (30% des cases remplies)
-- `"Einstein"` (10% des cases remplies, très difficile)}
+\item{taille}{Un entier pair représentant la taille de la grille (ex: 6, 8, 10).}
 
-\item{taille}{Un entier représentant la taille de la grille (doit être un multiple de 2 entre 4 et 100).}
+\item{niveau}{Un caractère indiquant le niveau de difficulté : "facile", "moyen", ou "difficile".}
 }
 \value{
-Une matrice `taille x taille` contenant des valeurs `0`, `1` et `NA` (cases vides).
+Une matrice de taille x taille contenant la grille Takuzu avec certaines cases vides.
 }
 \description{
-Cette fonction crée une grille de Takuzu de taille `taille x taille` en remplissant
-un certain nombre de cases en fonction du niveau de difficulté choisi.
+Génère une grille Takuzu valide avec un niveau de difficulté donné
 }

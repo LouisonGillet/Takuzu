@@ -12,21 +12,15 @@
 #'   - `"Einstein"` (10% des cases remplies, très difficile)
 #'
 #' @return Un entier correspondant au nombre de cases à préremplir.
-#' @examples
-#' Choisir_difficulte(8, "moyen") # Retourne environ 26 cases pour une grille 8x8
 #' @export
 #'
 choisir_difficulte <- function(taille, niveau) {
-  # Vérifie que la taille est valide (parcours les tailles possibles de 4 a 100)
-  if (!(taille %in% seq(4,100,2))) {
-    stop("La taille de la grille doit être de taille 2n*2n")
-  }
   # Configuration des niveaux en foncion du pourcentage de cases remplies
   niveaux <- list("Facile" = 0.5, "Moyen" = 0.4,   "Difficile" = 0.3, "Einstein" = 0.1)
   if (!(niveau %in% names(niveaux))) {
     stop("Choisissez un niveau parmi : Facile, Moyen, Difficile, Einstein")
   }
   # Calcul du nombre de cases à remplir
-  nb_cases <- round(taille * taille * niveaux[[niveau]])
+  nb_cases = round(taille * taille * niveaux[[niveau]])
   return(nb_cases)
 }
