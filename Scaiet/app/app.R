@@ -8,6 +8,9 @@ ui <- fluidPage(
 
   theme = shinytheme("sandstone"),
 
+  # Ajouter la balise audio pour jouer la musique en arrière-plan
+  tags$audio(id = "musique", src = "musique2.mp3", type = "audio/mp3", autoplay = TRUE, loop = TRUE, style = "display: none;"),
+
   titlePanel(
     h1(
       strong(
@@ -16,9 +19,8 @@ ui <- fluidPage(
                    text-align: center;
                    font-family: Monaco;'>Takuzu</p>")
         )
-      ),
+      )
     ),
-
     windowTitle = "Jeu du Takuzu"
   ),
 
