@@ -22,15 +22,27 @@ ui <- fluidPage(
     windowTitle = "Jeu du Takuzu"
   ),
 
-  uiOutput("grille_boutons")
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("grid_size", "Taille de la grille", choices = c(4, 6, 8), selected = 8),
+      selectInput("niveau", "Niveau de difficulté", choices = c("Facile", "Moyen", "Difficile", "Einstein"), selected = "Moyen"),
+      actionButton("new_game", "Nouvelle Partie"),
+      actionButton("check_grid", "Vérifier"),
+      textOutput("result")
+    ),
+
+    mainPanel(
+      tableOutput("grille_boutons")
+    )
+  )
 )
 
 
 
 server <- function(input, output, session) {
-  nRows <- 6
-  nCols <- 6
-  niveau = "moyen"
+  nRows <- 8
+  nCols <- 8
+  niveau = "Moyen"
 
   rv <- reactiveValues(grille = generer_takuzu(niveau, nRows))  # Initialisation de la grille avec NA
 
@@ -40,7 +52,7 @@ server <- function(input, output, session) {
         lapply(1:nCols, function(j) {
           actionButton(inputId = paste("bouton", i, j, sep = "_"),
                        label = ifelse(is.na(rv$grille[i, j]), "", as.character(rv$grille[i, j])),
-                       style = "width: 100px; height: 100px; font-size: 18px; margin: 5px;")
+                       style = "width: 50px; height: 50px; font-size: 18px; margin: 5px;")
         })
       )
     })
