@@ -44,15 +44,21 @@ server <- function(input, output, session) {
   nCols <- 8
   niveau = "Moyen"
 
-  rv <- reactiveValues(grille = generer_takuzu(niveau, nRows))  # Initialisation de la grille avec NA
+  # Générer la grille de départ
+  grille_init <- generer_takuzu(niveau, nRows)
+
+  # Stocker la grille et les cases bloquées
+  rv <- reactiveValues(grille = grille_init, verrouillees = !is.na(grille_init))
 
   output$grille_boutons <- renderUI({
     boutons <- lapply(1:nRows, function(i) {
       fluidRow(
         lapply(1:nCols, function(j) {
+          valeur_case <- rv$grille[i, j]
           actionButton(inputId = paste("bouton", i, j, sep = "_"),
                        label = ifelse(is.na(rv$grille[i, j]), "", as.character(rv$grille[i, j])),
-                       style = "width: 50px; height: 50px; font-size: 18px; margin: 5px;")
+                       style = "width: 50px; height: 50px; font-size: 18px; margin: 5px;",
+                       disabled = rv$verrouillees[i, j])
         })
       )
     })
