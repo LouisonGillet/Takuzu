@@ -9,7 +9,7 @@ ui <- fluidPage(
   theme = shinytheme("sandstone"),
 
   # Ajouter la balise audio pour jouer la musique en arrière-plan
-  tags$audio(id = "musique", src = "musique1.mp3", type = "audio/mp3", autoplay = TRUE, loop = TRUE, style = "display: none;"),
+  tags$audio(id = "musique", src = "musique2.mp3", type = "audio/mp3", autoplay = TRUE, loop = TRUE, style = "display: none;"),
 
   titlePanel(
     h1(
@@ -30,7 +30,9 @@ ui <- fluidPage(
       selectInput("niveau", "Niveau de difficulté", choices = c("Facile", "Moyen", "Difficile", "Einstein"), selected = "Moyen"),
       actionButton("new_game", "Nouvelle Partie"),
       actionButton("check_grid", "Vérifier"),
-      textOutput("result")
+      textOutput("result"),
+      textOutput("timer")
+
     ),
 
     mainPanel(
@@ -45,16 +47,28 @@ server <- function(input, output, session) {
   nRows = reactive({ as.numeric(input$grid_size) })
   nCols = nRows
   niveau = reactive({ input$niveau })
+  debut_temps <- reactiveVal(NULL)
+  depart_chrono <- reactiveVal(FALSE)
 
   rv = reactiveValues(grille = NULL, verrouillees = NULL)
 
   # Observer la nouvelle partie
   observeEvent(input$new_game, {
+    debut_temps(Sys.time())
+    depart_chrono(TRUE)
     showNotification(paste("Nouvelle partie - Niveau :", niveau(), "- Taille :", nRows(), "x", nCols()), type = "message")
     grille_init = generer_takuzu(nRows(),niveau())
     rv$grille = grille_init
     rv$verrouillees = !is.na(grille_init)
     output$result = renderText("Nouvelle partie commencée ! Bonne chance ")
+  })
+
+  # Affichage du chronomètre en temps réel
+  output$timer <- renderText({
+    req(debut_temps(), depart_chrono())  # Assure que la partie a commencé et que le chrono tourne
+    invalidateLater(1000, session)  # Met à jour chaque seconde
+    temps_ecoule = difftime(Sys.time(), debut_temps(), units = "secs")
+    paste("Temps écoulé :", round(temps_ecoule), "secondes")
   })
 
   # Affichage des boutons de la grille
@@ -106,7 +120,11 @@ server <- function(input, output, session) {
       output$result = renderText(" ❌ La grille n'est pas bonne, réessayez !")
     }
     if (message == TRUE) {
+      depart_chrono(FALSE)
+      delta_temps = difftime(Sys.time(), debut_temps(), units = "secs")
+      output$timer = renderText({paste("Temps écoulé :", round(delta_temps), "secondes")})
       output$result = renderText(" 🎉 Bravo, vous avez réussi !")
+      easyClose = TRUE
     }
   })
 }
