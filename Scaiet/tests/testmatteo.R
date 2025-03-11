@@ -47,8 +47,8 @@ server <- function(input, output, session) {
   nRows = reactive({ as.numeric(input$grid_size) })
   nCols = nRows
   niveau = reactive({ input$niveau })
-  debut_temps <- reactiveVal(NULL)
-  depart_chrono <- reactiveVal(FALSE)
+  debut_temps = reactiveVal(NULL)
+  depart_chrono = reactiveVal(FALSE)
 
   rv = reactiveValues(grille = NULL, verrouillees = NULL)
 
