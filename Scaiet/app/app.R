@@ -31,12 +31,11 @@ ui <- fluidPage(
       actionButton("new_game", "Nouvelle Partie"),
       actionButton("check_grid", "Vérifier"),
       textOutput("result"),
-      textOutput("timer")
-
     ),
 
     mainPanel(
-      tableOutput("grille_boutons")
+      h1(tableOutput("grille_boutons")),
+      h2(textOutput("timer"))
     )
   )
 )
@@ -67,24 +66,73 @@ server <- function(input, output, session) {
   output$timer <- renderText({
     req(debut_temps(), depart_chrono())  # Assure que la partie a commencé et que le chrono tourne
     invalidateLater(1000, session)  # Met à jour chaque seconde
-    temps_ecoule = difftime(Sys.time(), debut_temps(), units = "secs")
-    paste("Temps écoulé :", round(temps_ecoule), "secondes")
+
+    temps_ecoule <- as.integer(difftime(Sys.time(), debut_temps(), units = "secs"))
+    heures <- temps_ecoule %/% 3600
+    minutes <- (temps_ecoule %% 3600) %/% 60
+    secondes <- temps_ecoule %% 60
+
+    sprintf("%02d:%02d:%02d", heures, minutes, secondes)
   })
 
-  # Affichage des boutons de la grille
+  # Affichage des boutons de la grille avec coordonnées
   output$grille_boutons <- renderUI({
+
+    # Générer les étiquettes de colonnes (A, B, C, ...)
+    lettres_colonnes <- LETTERS[1:nCols()]
+
+    # Style CSS uniforme pour alignement et apparence
+    css_case <-
+
+        "width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: bold;
+        border: 1px solid black;
+        margin: 2px;"
+
+    css_coord <-
+
+      "width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: bold;
+        border: 1px solid black;
+        margin: 2px;
+        color : black;
+        background-color : white"
+
+    # Ligne des en-têtes de colonnes
+    header_row <- div(
+      style = "display: flex; flex-direction: row; align-items: center;",
+      div(style = "width: 54px;"),  # Case vide pour aligner avec les numéros de ligne
+      lapply(1:nCols(), function(j) {
+        div(lettres_colonnes[j], style = css_coord)
+      })
+    )
+
+    # Générer les lignes de la grille avec les étiquettes de lignes
     boutons <- lapply(1:nRows(), function(i) {
-      fluidRow(
+      div(
+        style = "display: flex; flex-direction: row; align-items: center;",
+        div(strong(i), style = css_coord),  # Étiquette de ligne
         lapply(1:nCols(), function(j) {
-          valeur_case = rv$grille[i, j]
           actionButton(inputId = paste("bouton", i, j, sep = "_"),
                        label = ifelse(is.na(rv$grille[i, j]), "", as.character(rv$grille[i, j])),
-                       style = "width: 50px; height: 50px; font-size: 18px; margin: 5px;",
+                       style = paste0(css_case, "border-radius: 0;"),  # Suppression des bords arrondis
                        disabled = rv$verrouillees[i, j])
         })
       )
     })
-    tagList(boutons)
+
+    # Affichage complet (en-têtes + boutons)
+    tagList(header_row, boutons)
   })
 
   # Observer les clics sur les boutons pour les mettre à jour

@@ -1,6 +1,7 @@
-- tuto
-- taille de grille
+- tuto -> plutôt rappel des règles ici
+- taille de grille (ok)
 - gérer les erreurs (ex : mettre en rouge si pas bon)
-- musique
+- musique (ok)
 - visuel
-- timer
+- timer (ok)
+- possibilité de changer le visuel : passer du biairo (ronds blanc et noirs) à Takuzu (1 et 0)
