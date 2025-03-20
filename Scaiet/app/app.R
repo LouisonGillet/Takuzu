@@ -5,53 +5,116 @@ library(shinyalert)
 library(shinyjs)
 
 ui <- fluidPage(
-  useShinyjs(),  # Activation de shinyjs pour exécuter du JavaScript
-
+  useShinyjs(), 
   theme = shinytheme("sandstone"),
+  tags$style(HTML("
+    @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap'); 
+      .title { font-size: 36px; font-weight: bold; margin-top: 30px; }
+      .subtext { font-size: 18px; color: #aaa; margin-bottom: 40px; }
+      .button-container { display: flex; justify-content: center; gap: 20px; margin-top: 20px; }
+      .btn-custom { width: 350px; height: 100px; font-size: 20px; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; transition: 0.3s; }
+      .btn-custom2 { width: 250px; height: 60px; font-size: 20px; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; transition: 0.3s; }
+      .btn-play { background-color: #4CAF50; color: white; }
+      .btn-play:hover { background-color: #3e8e41; }
+      .btn-about { background-color: #444; color: white; }
+      .btn-about:hover { background-color: #666; }
+      .img-container { display: flex; justify-content: center; margin-top: 50px; }
+      .game-img { width: 500px; border-radius: 10px; box-shadow: 0px 4px 10px rgba(0,0,0,0.5); }
+      .title-text {font-family: 'Pacifico', cursive;font-size: 70px;color: #784212;text-align: center;}
+    ")),
 
   # Ajouter la balise audio pour jouer la musique en arrière-plan
   tags$audio(id = "musique", src = "musique2.mp3", type = "audio/mp3", autoplay = TRUE, loop = TRUE, style = "display: none;"),
 
-  titlePanel(
-    h1(
-      strong(
-        em(
-          HTML("<p style='color: #784212;
-                   text-align: center;
-                   font-family: Monaco;'>Takuzu</p>")
-        )
+  div(id = "accueil",
+      div(style = "display: flex; align-items: center; justify-content: center; margin-top: 150px;",
+          # Colonne gauche
+          div(style = "text-align: center; margin-right: 50px; display: flex; flex-direction: column; align-items: center;",
+              h1("Jeu du Takuzu", class = "title-text"),
+              div(style = "margin-top: 10px;", class = "subtext", "Un jeu de logique captivant"),
+              div(style = "margin-top: 30px; width: 100%; display: flex; flex-direction: column; align-items: center;",
+                  actionButton("start_game", "Commencer le jeu", class = "btn-custom"),
+                  actionButton("show_about", "À propos", class = "btn-custom2", style = "margin-top: 15px;"))
+          ),
+          # Colonne droite
+          div(img(src = "image1.png", class = "game-img", style = "max-width: 400px; height: auto;"))
       )
-    ),
-    windowTitle = "Jeu du Takuzu"
   ),
-
-  sidebarLayout(
-    sidebarPanel(
-      selectInput("grid_size", "Taille de la grille", choices = c(4, 6, 8), selected = 8),
-      selectInput("niveau", "Niveau de difficulté", choices = c("Facile", "Moyen", "Difficile", "Einstein"), selected = "Moyen"),
-      actionButton("new_game", "Nouvelle Partie"),
-      actionButton("check_grid", "Vérifier"),
-      textOutput("result"),
-      br(),
-      div(
-        style = "border: 1px solid #ccc; padding: 10px; margin-top: 20px; background-color: #f9f9f9; text-align: center;",
-        h4("Contrôle de la musique"),
-        actionButton("toggle_music", "⏸️ Stopper la musique", style = "width: 100%;"),
-        br(), br(),
-        selectInput("select_music", "Choisir une musique :",
-                    choices = c("Lofi" = "musique1.mp3", "Traditionnel" = "musique2.mp3"))
-      )
-
-    ),
-
-    mainPanel(
-      h1(tableOutput("grille_boutons")),
-      h2(textOutput("timer"))
+  
+  
+  # Interface de jeu (cachée au départ)
+  hidden(
+    div(id = "jeu",
+        titlePanel(h1("Jeu du Takuzu", class = "title-text")),
+        div(style = "position: absolute; bottom: 20px; right: 20px;",actionButton("back_home", "Retour")),
+        sidebarLayout(
+          sidebarPanel(
+            selectInput("grid_size", "Taille de la grille", choices = c(4, 6, 8), selected = 8),
+            selectInput("niveau", "Niveau de difficulté", choices = c("Facile", "Moyen", "Difficile", "Einstein"), selected = "Moyen"),
+            actionButton("new_game", "Nouvelle Partie"),
+            actionButton("check_grid", "Vérifier"),
+            textOutput("result"),
+            br(),
+            div(
+              style = "border: 1px solid #ccc; padding: 10px; margin-top: 20px; background-color: #f9f9f9; text-align: center;",
+              h4("Contrôle de la musique"),
+              actionButton("toggle_music", "⏸️ Stopper la musique", style = "width: 100%;"),
+              br(), br(),
+              selectInput("select_music", "Choisir une musique :",
+                          choices = c("Lofi" = "musique1.mp3", "Traditionnel" = "musique2.mp3"))
+            )
+          ),
+          mainPanel(
+            h1(tableOutput("grille_boutons")),
+            h2(textOutput("timer"))
+          )
+        )
+    )
+  ),
+  
+  # Pour la page apropos
+  hidden(
+    div(id = "apropos",
+        h1("À Propos", style = "font-size: 50px; font-weight: bold; text-align: center; color: #333;"),
+        p("Ce jeu a été créé pour l'UE HAX815X", style = "font-size: 30px; text-align: center; margin-bottom: 20px;"),
+        p("Règles du Takuzu :", style = "font-size: 24px; font-weight: bold; text-decoration: underline; margin-top: 30px;"),
+        tags$ul(
+          tags$li("Chaque ligne et colonne contient autant de 0 que de 1.", style = "font-size: 18px; margin-bottom: 10px;"),
+          tags$li("Pas plus de deux chiffres identiques à la suite.", style = "font-size: 18px; margin-bottom: 10px;"),
+          tags$li("Les lignes/colonnes identiques sont interdites.", style = "font-size: 18px;")
+        ),
+        p("Auteurs :", style = "font-size: 24px; font-weight: bold; text-decoration: underline; margin-top: 30px;"),
+        tags$ul(
+          tags$li("GILLET LOUISON : louison.gillet@etu.umontpellier.fr", style = "font-size: 18px; margin-bottom: 10px;"),
+          tags$li("SCAIA MATTEO : matteo.scaia@etu.umontpellier.fr", style = "font-size: 18px; margin-bottom: 10px;")
+        ),
+        
+        # Bouton Retour en bas à droite
+        div(style = "position: fixed; bottom: 20px; right: 20px;",
+            actionButton("back_home", "Retour")
+        )
     )
   )
+  
 )
 
+
 server <- function(input, output, session) {
+  observeEvent(input$start_game, {
+    shinyjs::hide("accueil")
+    shinyjs::show("jeu")
+  })
+  
+  observeEvent(input$show_about, {
+    shinyjs::hide("accueil")
+    shinyjs::show("apropos")
+  })
+  
+  observeEvent(input$back_home, {
+    shinyjs::hide("apropos")
+    shinyjs::hide("jeu")
+    shinyjs::show("accueil")
+  })
   nRows = reactive({ as.numeric(input$grid_size) })
   nCols = nRows
   niveau = reactive({ input$niveau })
