@@ -2,9 +2,10 @@ library(shiny)
 library(shinythemes)
 library(shinyWidgets)
 library(shinyalert)
-
+library(shinyjs)
 
 ui <- fluidPage(
+  useShinyjs(),  # Activation de shinyjs pour exécuter du JavaScript
 
   theme = shinytheme("sandstone"),
 
@@ -31,6 +32,16 @@ ui <- fluidPage(
       actionButton("new_game", "Nouvelle Partie"),
       actionButton("check_grid", "Vérifier"),
       textOutput("result"),
+      br(),
+      div(
+        style = "border: 1px solid #ccc; padding: 10px; margin-top: 20px; background-color: #f9f9f9; text-align: center;",
+        h4("Contrôle de la musique"),
+        actionButton("toggle_music", "⏸️ Stopper la musique", style = "width: 100%;"),
+        br(), br(),
+        selectInput("select_music", "Choisir une musique :",
+                    choices = c("Lofi" = "musique1.mp3", "Traditionnel" = "musique2.mp3"))
+      )
+
     ),
 
     mainPanel(
@@ -39,8 +50,6 @@ ui <- fluidPage(
     )
   )
 )
-
-
 
 server <- function(input, output, session) {
   nRows = reactive({ as.numeric(input$grid_size) })
@@ -83,8 +92,7 @@ server <- function(input, output, session) {
 
     # Style CSS uniforme pour alignement et apparence
     css_case <-
-
-        "width: 50px;
+      "width: 50px;
         height: 50px;
         display: flex;
         align-items: center;
@@ -95,7 +103,6 @@ server <- function(input, output, session) {
         margin: 2px;"
 
     css_coord <-
-
       "width: 50px;
         height: 50px;
         display: flex;
@@ -134,6 +141,47 @@ server <- function(input, output, session) {
     # Affichage complet (en-têtes + boutons)
     tagList(header_row, boutons)
   })
+
+  # Gestion musique
+  musique_en_pause <- reactiveVal(FALSE)
+
+  observeEvent(input$toggle_music, {
+    if (musique_en_pause()) {
+      runjs("
+      var audio = document.getElementById('musique');
+      audio.play();
+    ")
+      updateActionButton(session, "toggle_music", label = "⏸️ Stopper la musique")
+      musique_en_pause(FALSE)
+    } else {
+      runjs("
+      var audio = document.getElementById('musique');
+      audio.pause();
+    ")
+      updateActionButton(session, "toggle_music", label = "▶️ Reprendre la musique")
+      musique_en_pause(TRUE)
+    }
+  })
+
+
+  observeEvent(input$select_music, {
+    runjs(sprintf("
+    var audio = document.getElementById('musique');
+    audio.src = '%s';
+    audio.load();
+  ", input$select_music))
+
+    # Si la musique était en lecture avant le changement, elle doit reprendre
+    if (!musique_en_pause()) {
+      runjs("document.getElementById('musique').play();")
+      updateActionButton(session, "toggle_music", label = "⏸️ Stopper la musique")
+    } else {
+      # Sinon, on s'assure que la musique reste en pause après le changement
+      runjs("document.getElementById('musique').pause();")
+      updateActionButton(session, "toggle_music", label = "▶️ Reprendre la musique")
+    }
+  })
+
 
   # Observer les clics sur les boutons pour les mettre à jour
   observe({
@@ -179,4 +227,3 @@ server <- function(input, output, session) {
 
 # Lancer l'application
 shinyApp(ui = ui, server = server)
-
