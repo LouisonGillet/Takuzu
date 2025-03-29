@@ -17,9 +17,6 @@
 choisir_difficulte <- function(taille, niveau) {
   # Configuration des niveaux en foncion du pourcentage de cases remplies
   niveaux <- list("Facile" = 0.5, "Moyen" = 0.4,   "Difficile" = 0.3, "Einstein" = 0.1)
-  if (!(niveau %in% names(niveaux))) {
-    stop("Choisissez un niveau parmi : Facile, Moyen, Difficile, Einstein")
-  }
   # Calcul du nombre de cases à remplir
   nb_cases = round(taille * taille * niveaux[[niveau]])
   return(nb_cases)

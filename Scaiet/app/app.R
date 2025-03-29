@@ -42,7 +42,7 @@ ui <- fluidPage(
   ),
   
   
-  # Interface de jeu (cachée au départ)
+  # Interface de jeu 
   hidden(
     div(id = "jeu",
         titlePanel(h1("Jeu du Takuzu", class = "title-text")),
@@ -94,27 +94,85 @@ ui <- fluidPage(
             actionButton("back_home", "Retour")
         )
     )
+  ),
+  
+  # Pour la page des tailles
+  hidden(
+    div(id = "choix_taille",
+        h1("Choisissez la taille de la grille", 
+           style = "font-size: 50px; font-weight: bold; text-align: center; color: #333; margin-top: 50px;"),
+        
+        # Conteneur des boutons en colonne
+        div(style = "display: flex; flex-direction: column; align-items: center; gap: 20px; margin-top: 50px;",
+            actionButton("size_4", "4x4", class = "btn-custom"),
+            actionButton("size_6", "6x6", class = "btn-custom"),
+            actionButton("size_8", "8x8", class = "btn-custom")
+        ),
+        
+        # Bouton Retour
+        div(style = "position: fixed; bottom: 20px; right: 20px;",
+            actionButton("back_home", "Retour")
+        )
+    )
   )
+  
   
 )
 
 
 server <- function(input, output, session) {
+  
   observeEvent(input$start_game, {
+    shinyjs::show("choix_taille")
     shinyjs::hide("accueil")
-    shinyjs::show("jeu")
+    shinyjs::hide("jeu")
   })
   
   observeEvent(input$show_about, {
     shinyjs::hide("accueil")
     shinyjs::show("apropos")
+    shinyjs::hide("choix_taille")
   })
   
   observeEvent(input$back_home, {
     shinyjs::hide("apropos")
     shinyjs::hide("jeu")
     shinyjs::show("accueil")
+    shinyjs::hide("choix_taille")
+    debut_temps(NULL)  
+    depart_chrono(FALSE)  
+    output$timer <- renderText({ "00:00:00" })
+    rv$grille <- NULL 
+    rv$verrouillees <- NULL
   })
+  
+  observeEvent(input$size_4, {
+    updateSelectInput(session, "grid_size", selected = 4)
+    rv$grille <- matrix(NA, 4, 4)  
+    rv$verrouillees <- matrix(FALSE, 4, 4)
+    shinyjs::hide("choix_taille")
+    shinyjs::show("jeu")
+    shinyjs::hide("grid_size")
+  })
+  
+  observeEvent(input$size_6, {
+    updateSelectInput(session, "grid_size", selected = 6)
+    rv$grille <- matrix(NA, 6, 6) 
+    rv$verrouillees <- matrix(FALSE, 6, 6)
+    shinyjs::hide("choix_taille")
+    shinyjs::show("jeu")  # Passer au jeu
+    shinyjs::hide("grid_size")
+  })
+  
+  observeEvent(input$size_8, {
+    updateSelectInput(session, "grid_size", selected = 8)
+    rv$grille <- matrix(NA, 8, 8)  # Réinitialisation avec la bonne taille
+    rv$verrouillees <- matrix(FALSE, 8, 8)
+    shinyjs::hide("choix_taille")
+    shinyjs::show("jeu")  # Passer au jeu
+    shinyjs::hide("grid_size")
+  })
+  
   nRows = reactive({ as.numeric(input$grid_size) })
   nCols = nRows
   niveau = reactive({ input$niveau })
@@ -127,82 +185,35 @@ server <- function(input, output, session) {
   observeEvent(input$new_game, {
     debut_temps(Sys.time())
     depart_chrono(TRUE)
-    showNotification(paste("Nouvelle partie - Niveau :", niveau(), "- Taille :", nRows(), "x", nCols()), type = "message")
     grille_init = generer_takuzu(nRows(),niveau())
     rv$grille = grille_init
     rv$verrouillees = !is.na(grille_init)
     output$result = renderText("Nouvelle partie commencée ! Bonne chance ")
+    output$timer <- renderText({
+      req(debut_temps(), depart_chrono())  # Assure que la partie a commencé et que le chrono tourne
+      invalidateLater(1000, session)  # Met à jour chaque seconde
+      
+      temps_ecoule <- as.integer(difftime(Sys.time(), debut_temps(), units = "secs"))
+      heures <- temps_ecoule %/% 3600
+      minutes <- (temps_ecoule %% 3600) %/% 60
+      secondes <- temps_ecoule %% 60
+      
+      sprintf("%02d:%02d:%02d", heures, minutes, secondes)
+    })
   })
-
-  # Affichage du chronomètre en temps réel
-  output$timer <- renderText({
-    req(debut_temps(), depart_chrono())  # Assure que la partie a commencé et que le chrono tourne
-    invalidateLater(1000, session)  # Met à jour chaque seconde
-
-    temps_ecoule <- as.integer(difftime(Sys.time(), debut_temps(), units = "secs"))
-    heures <- temps_ecoule %/% 3600
-    minutes <- (temps_ecoule %% 3600) %/% 60
-    secondes <- temps_ecoule %% 60
-
-    sprintf("%02d:%02d:%02d", heures, minutes, secondes)
+  
+  observeEvent(input$niveau, {
+    debut_temps(NULL)  # Supprime le temps de début
+    depart_chrono(FALSE)  # Arrête le chrono
+    output$timer <- renderText({ "00:00:00" })  # Remet l'affichage à zéro
+    # Réinitialisation de la grille à vide
+    rv$grille <- NULL  # Grille vide
+    rv$verrouillees <- NULL  # Tout déverrouiller
   })
 
   # Affichage des boutons de la grille avec coordonnées
   output$grille_boutons <- renderUI({
-
-    # Générer les étiquettes de colonnes (A, B, C, ...)
-    lettres_colonnes <- LETTERS[1:nCols()]
-
-    # Style CSS uniforme pour alignement et apparence
-    css_case <-
-      "width: 50px;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 18px;
-        font-weight: bold;
-        border: 1px solid black;
-        margin: 2px;"
-
-    css_coord <-
-      "width: 50px;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 18px;
-        font-weight: bold;
-        border: 1px solid black;
-        margin: 2px;
-        color : black;
-        background-color : white"
-
-    # Ligne des en-têtes de colonnes
-    header_row <- div(
-      style = "display: flex; flex-direction: row; align-items: center;",
-      div(style = "width: 54px;"),  # Case vide pour aligner avec les numéros de ligne
-      lapply(1:nCols(), function(j) {
-        div(lettres_colonnes[j], style = css_coord)
-      })
-    )
-
-    # Générer les lignes de la grille avec les étiquettes de lignes
-    boutons <- lapply(1:nRows(), function(i) {
-      div(
-        style = "display: flex; flex-direction: row; align-items: center;",
-        div(strong(i), style = css_coord),  # Étiquette de ligne
-        lapply(1:nCols(), function(j) {
-          actionButton(inputId = paste("bouton", i, j, sep = "_"),
-                       label = ifelse(is.na(rv$grille[i, j]), "", as.character(rv$grille[i, j])),
-                       style = paste0(css_case, "border-radius: 0;"),  # Suppression des bords arrondis
-                       disabled = rv$verrouillees[i, j])
-        })
-      )
-    })
-
-    # Affichage complet (en-têtes + boutons)
-    tagList(header_row, boutons)
+    generer_grille_ui(nRows(), nRows(),rv)
   })
 
   # Gestion musique
@@ -260,6 +271,7 @@ server <- function(input, output, session) {
             valeur_nouvelle = NA
           }
           rv$grille[i, j] = valeur_nouvelle
+          print(paste("bouton", i, j))
 
           # Mettre à jour le label du bouton
           updateActionButton(
