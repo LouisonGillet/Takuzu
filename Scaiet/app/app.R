@@ -42,10 +42,10 @@ ui <- fluidPage(
   ),
   
   
-  # Interface de jeu 
+  # Interface de jeu 8x8
   hidden(
-    div(id = "jeu",
-        titlePanel(h1("Jeu du Takuzu", class = "title-text")),
+    div(id = "jeu8x8",
+        titlePanel(h1("Jeu du Takuzu en 8x8", class = "title-text")),
         div(style = "position: absolute; bottom: 20px; right: 20px;",actionButton("back_home", "Retour")),
         sidebarLayout(
           sidebarPanel(
@@ -65,7 +65,66 @@ ui <- fluidPage(
             )
           ),
           mainPanel(
-            h1(tableOutput("grille_boutons")),
+            h1(tableOutput("grille_boutons8x8")),
+            h2(textOutput("timer"))
+          )
+        )
+    )
+  ),
+  
+  # Interface de jeu 6x6
+  hidden(
+    div(id = "jeu6x6",
+        titlePanel(h1("Jeu du Takuzu en 6x6", class = "title-text")),
+        div(style = "position: absolute; bottom: 20px; right: 20px;",actionButton("back_home", "Retour")),
+        sidebarLayout(
+          sidebarPanel(
+            selectInput("grid_size", "Taille de la grille", choices = c(4, 6, 8), selected = 6),
+            selectInput("niveau", "Niveau de difficulté", choices = c("Facile", "Moyen", "Difficile", "Einstein"), selected = "Moyen"),
+            actionButton("new_game", "Nouvelle Partie"),
+            actionButton("check_grid", "Vérifier"),
+            textOutput("result"),
+            br(),
+            div(
+              style = "border: 1px solid #ccc; padding: 10px; margin-top: 20px; background-color: #f9f9f9; text-align: center;",
+              h4("Contrôle de la musique"),
+              actionButton("toggle_music", "⏸️ Stopper la musique", style = "width: 100%;"),
+              br(), br(),
+              selectInput("select_music", "Choisir une musique :",
+                          choices = c("Lofi" = "musique1.mp3", "Traditionnel" = "musique2.mp3"))
+            )
+          ),
+          mainPanel(
+            h1(tableOutput("grille_boutons6x6")),
+            h2(textOutput("timer"))
+          )
+        )
+    )
+  ),
+  # Interface de jeu 
+  hidden(
+    div(id = "jeu4x4",
+        titlePanel(h1("Jeu du Takuzu en 4x4", class = "title-text")),
+        div(style = "position: absolute; bottom: 20px; right: 20px;",actionButton("back_home", "Retour")),
+        sidebarLayout(
+          sidebarPanel(
+            selectInput("grid_size", "Taille de la grille", choices = c(4, 6, 8), selected = 4),
+            selectInput("niveau", "Niveau de difficulté", choices = c("Facile", "Moyen", "Difficile", "Einstein"), selected = "Moyen"),
+            actionButton("new_game", "Nouvelle Partie"),
+            actionButton("check_grid", "Vérifier"),
+            textOutput("result"),
+            br(),
+            div(
+              style = "border: 1px solid #ccc; padding: 10px; margin-top: 20px; background-color: #f9f9f9; text-align: center;",
+              h4("Contrôle de la musique"),
+              actionButton("toggle_music", "⏸️ Stopper la musique", style = "width: 100%;"),
+              br(), br(),
+              selectInput("select_music", "Choisir une musique :",
+                          choices = c("Lofi" = "musique1.mp3", "Traditionnel" = "musique2.mp3"))
+            )
+          ),
+          mainPanel(
+            h1(tableOutput("grille_boutons4x4")),
             h2(textOutput("timer"))
           )
         )
@@ -136,44 +195,57 @@ server <- function(input, output, session) {
   
   observeEvent(input$back_home, {
     shinyjs::hide("apropos")
-    shinyjs::hide("jeu")
+    shinyjs::hide("jeu6x6")
+    shinyjs::hide("jeu8x8")
+    shinyjs::hide("jeu4x4")
     shinyjs::show("accueil")
     shinyjs::hide("choix_taille")
     debut_temps(NULL)  
     depart_chrono(FALSE)  
     output$timer <- renderText({ "00:00:00" })
-    rv$grille <- NULL 
-    rv$verrouillees <- NULL
   })
   
   observeEvent(input$size_4, {
-    updateSelectInput(session, "grid_size", selected = 4)
-    rv$grille <- matrix(NA, 4, 4)  
-    rv$verrouillees <- matrix(FALSE, 4, 4)
+    shinyjs::hide("jeu6x6")
+    shinyjs::hide("jeu8x8")
+    shinyjs::show("jeu4x4")
     shinyjs::hide("choix_taille")
-    shinyjs::show("jeu")
-    shinyjs::hide("grid_size")
+    nRows(4)
+    rv$grille <- NULL
+    rv$verrouillees <- NULL
+    output$grille_boutons4x4 <- renderUI({
+      generer_grille_ui(nRows(), nCols(), rv)
+    })
   })
   
   observeEvent(input$size_6, {
-    updateSelectInput(session, "grid_size", selected = 6)
-    rv$grille <- matrix(NA, 6, 6) 
-    rv$verrouillees <- matrix(FALSE, 6, 6)
+    shinyjs::show("jeu6x6")
+    shinyjs::hide("jeu8x8")
+    shinyjs::hide("jeu4x4")
     shinyjs::hide("choix_taille")
-    shinyjs::show("jeu")  # Passer au jeu
-    shinyjs::hide("grid_size")
+    nRows(6)
+    rv$grille <- NULL
+    rv$verrouillees <- NULL
+    output$grille_boutons6x6 <- renderUI({
+      generer_grille_ui(nRows(), nCols(), rv)
+    })
   })
   
   observeEvent(input$size_8, {
-    updateSelectInput(session, "grid_size", selected = 8)
-    rv$grille <- matrix(NA, 8, 8)  # Réinitialisation avec la bonne taille
-    rv$verrouillees <- matrix(FALSE, 8, 8)
+    shinyjs::hide("jeu6x6")
+    shinyjs::show("jeu8x8")
+    shinyjs::hide("jeu4x4")
     shinyjs::hide("choix_taille")
-    shinyjs::show("jeu")  # Passer au jeu
-    shinyjs::hide("grid_size")
+    nRows(8)
+    rv$grille <- NULL
+    rv$verrouillees <- NULL
+    output$grille_boutons8x8 <- renderUI({
+      generer_grille_ui(nRows(), nCols(), rv)
+    })
   })
   
-  nRows = reactive({ as.numeric(input$grid_size) })
+  
+  nRows = reactiveVal(8) 
   nCols = nRows
   niveau = reactive({ input$niveau })
   debut_temps = reactiveVal(NULL)
@@ -211,10 +283,6 @@ server <- function(input, output, session) {
     rv$verrouillees <- NULL  # Tout déverrouiller
   })
 
-  # Affichage des boutons de la grille avec coordonnées
-  output$grille_boutons <- renderUI({
-    generer_grille_ui(nRows(), nRows(),rv)
-  })
 
   # Gestion musique
   musique_en_pause <- reactiveVal(FALSE)
@@ -255,34 +323,48 @@ server <- function(input, output, session) {
       updateActionButton(session, "toggle_music", label = "▶️ Reprendre la musique")
     }
   })
-
-
-  # Observer les clics sur les boutons pour les mettre à jour
-  observe({
+  
+  remove_all_observers <- function() {
     lapply(1:nRows(), function(i) {
       lapply(1:nCols(), function(j) {
-        observeEvent(input[[paste("bouton", i, j, sep = "_")]], {
-          valeur_actuelle = rv$grille[i, j]
-          if (is.na(valeur_actuelle)) {
-            valeur_nouvelle = 0
-          } else if (valeur_actuelle == 0) {
-            valeur_nouvelle = 1
-          } else {
-            valeur_nouvelle = NA
-          }
-          rv$grille[i, j] = valeur_nouvelle
-          print(paste("bouton", i, j))
+        bouton_id <- paste("bouton", i, j, sep = "_")
+        removeEventObserver(bouton_id)  # Enlever l'observateur pour chaque bouton
+      })
+    })
+  }
 
-          # Mettre à jour le label du bouton
-          updateActionButton(
-            session,
-            paste("bouton", i, j, sep = "_"),
-            label = ifelse(is.na(valeur_nouvelle), "", as.character(valeur_nouvelle))
-          )
-        })
+  observe({
+    # Suppression des anciens observateurs avant d'en ajouter de nouveaux
+    lapply(1:nRows(), function(i) {
+      lapply(1:nCols(), function(j) {
+        bouton_id <- paste("bouton", i, j, sep = "_")
+        
+        # Ajouter un observateur uniquement si ce bouton n'a pas déjà un observateur
+        if (is.null(input[[bouton_id]])) {
+          observeEvent(input[[bouton_id]], {
+            valeur_actuelle <- rv$grille[i, j]
+            if (is.na(valeur_actuelle)) {
+              valeur_nouvelle <- 0
+            } else if (valeur_actuelle == 0) {
+              valeur_nouvelle <- 1
+            } else {
+              valeur_nouvelle <- NA
+            }
+            rv$grille[i, j] <- valeur_nouvelle
+            print(paste("bouton", i, j))
+            
+            # Mettre à jour le label du bouton
+            updateActionButton(
+              session,
+              bouton_id,
+              label = ifelse(is.na(valeur_nouvelle), "", as.character(valeur_nouvelle))
+            )
+          })
+        }
       })
     })
   })
+  
 
   # Observer pour vérifier la grille
   observeEvent(input$check_grid, {
