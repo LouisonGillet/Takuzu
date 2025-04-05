@@ -49,11 +49,9 @@ ui <- fluidPage(
         div(style = "position: absolute; bottom: 20px; right: 20px;",actionButton("back_home", "Retour")),
         sidebarLayout(
           sidebarPanel(
-            selectInput("grid_size", "Taille de la grille", choices = c(4, 6, 8), selected = 8),
             selectInput("niveau", "Niveau de difficulté", choices = c("Facile", "Moyen", "Difficile", "Einstein"), selected = "Moyen"),
             actionButton("new_game", "Nouvelle Partie"),
             actionButton("check_grid", "Vérifier"),
-            textOutput("result"),
             br(),
             div(
               style = "border: 1px solid #ccc; padding: 10px; margin-top: 20px; background-color: #f9f9f9; text-align: center;",
@@ -65,8 +63,7 @@ ui <- fluidPage(
             )
           ),
           mainPanel(
-            h1(tableOutput("grille_boutons8x8")),
-            h2(textOutput("timer"))
+            h1(uiOutput("grille_boutons8x8")),
           )
         )
     )
@@ -79,11 +76,9 @@ ui <- fluidPage(
         div(style = "position: absolute; bottom: 20px; right: 20px;",actionButton("back_home", "Retour")),
         sidebarLayout(
           sidebarPanel(
-            selectInput("grid_size", "Taille de la grille", choices = c(4, 6, 8), selected = 6),
             selectInput("niveau", "Niveau de difficulté", choices = c("Facile", "Moyen", "Difficile", "Einstein"), selected = "Moyen"),
             actionButton("new_game", "Nouvelle Partie"),
             actionButton("check_grid", "Vérifier"),
-            textOutput("result"),
             br(),
             div(
               style = "border: 1px solid #ccc; padding: 10px; margin-top: 20px; background-color: #f9f9f9; text-align: center;",
@@ -95,8 +90,7 @@ ui <- fluidPage(
             )
           ),
           mainPanel(
-            h1(tableOutput("grille_boutons6x6")),
-            h2(textOutput("timer"))
+            h1(uiOutput("grille_boutons6x6")),
           )
         )
     )
@@ -108,11 +102,9 @@ ui <- fluidPage(
         div(style = "position: absolute; bottom: 20px; right: 20px;",actionButton("back_home", "Retour")),
         sidebarLayout(
           sidebarPanel(
-            selectInput("grid_size", "Taille de la grille", choices = c(4, 6, 8), selected = 4),
             selectInput("niveau", "Niveau de difficulté", choices = c("Facile", "Moyen", "Difficile", "Einstein"), selected = "Moyen"),
             actionButton("new_game", "Nouvelle Partie"),
             actionButton("check_grid", "Vérifier"),
-            textOutput("result"),
             br(),
             div(
               style = "border: 1px solid #ccc; padding: 10px; margin-top: 20px; background-color: #f9f9f9; text-align: center;",
@@ -124,8 +116,7 @@ ui <- fluidPage(
             )
           ),
           mainPanel(
-            h1(tableOutput("grille_boutons4x4")),
-            h2(textOutput("timer"))
+            h1(uiOutput("grille_boutons4x4")),
           )
         )
     )
@@ -173,69 +164,120 @@ ui <- fluidPage(
             actionButton("back_home", "Retour")
         )
     )
-  )
+  ),
   
-  
+  hidden(
+  div(
+    id = "chrono_page",  
+    style = "
+      border: 2px solid #ccc; 
+      padding: 20px; 
+      margin-top: 20px; 
+      background-color: #f9f9f9; 
+      border-radius: 15px; 
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+      text-align: center; 
+      width: 300px; 
+      margin-left: auto; 
+      margin-right: auto;
+    ",
+    h3("Chronomètre", style = "font-size: 24px; color: #333;"),
+    textOutput("timer")
+   )
+ ),
+ 
+ hidden(
+   div(
+     id = "résultat",
+     style = "
+        position: fixed;
+        bottom: 20px; 
+        left: 100px; 
+        width: 200px; 
+        height: 200px; 
+        background-color: #f0f0f0;
+        border: 2px solid #ccc;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        text-align: center;
+      ",
+     h3("Résultat", style = "font-size: 18px; color: #333;"),
+     textOutput("result")
+   )
+ )
+ 
 )
 
 
 server <- function(input, output, session) {
   
   observeEvent(input$start_game, {
-    shinyjs::show("choix_taille")
-    shinyjs::hide("accueil")
-    shinyjs::hide("jeu")
+    show("choix_taille")
+    hide("accueil")
+    hide("jeu")
   })
   
   observeEvent(input$show_about, {
-    shinyjs::hide("accueil")
-    shinyjs::show("apropos")
-    shinyjs::hide("choix_taille")
+    hide("accueil")
+    show("apropos")
+    hide("choix_taille")
+    hide("chrono_page")
+    hide("résultat")
   })
   
   observeEvent(input$back_home, {
-    shinyjs::hide("apropos")
-    shinyjs::hide("jeu6x6")
-    shinyjs::hide("jeu8x8")
-    shinyjs::hide("jeu4x4")
-    shinyjs::show("accueil")
-    shinyjs::hide("choix_taille")
+    hide("apropos")
+    hide("jeu6x6")
+    hide("jeu8x8")
+    hide("jeu4x4")
+    show("accueil")
+    hide("choix_taille")
     debut_temps(NULL)  
     depart_chrono(FALSE)  
     output$timer <- renderText({ "00:00:00" })
+    hide("chrono_page")
+    hide("résultat")
   })
   
   observeEvent(input$size_4, {
-    shinyjs::hide("jeu6x6")
-    shinyjs::hide("jeu8x8")
-    shinyjs::show("jeu4x4")
-    shinyjs::hide("choix_taille")
+    hide("jeu6x6")
+    hide("jeu8x8")
+    show("jeu4x4")
+    hide("choix_taille")
+    show("chrono_page")
     nRows(4)
     rv$grille <- NULL
     rv$verrouillees <- NULL
     output$grille_boutons4x4 <- renderUI({
       generer_grille_ui(nRows(), nCols(), rv)
     })
+    show("résultat")
   })
   
   observeEvent(input$size_6, {
-    shinyjs::show("jeu6x6")
-    shinyjs::hide("jeu8x8")
-    shinyjs::hide("jeu4x4")
-    shinyjs::hide("choix_taille")
+    show("jeu6x6")
+    hide("jeu8x8")
+    hide("jeu4x4")
+    hide("choix_taille")
+    show("chrono_page")
     nRows(6)
     rv$grille <- NULL
     rv$verrouillees <- NULL
     output$grille_boutons6x6 <- renderUI({
       generer_grille_ui(nRows(), nCols(), rv)
     })
+    show("résultat")
   })
   
   observeEvent(input$size_8, {
-    shinyjs::hide("jeu6x6")
-    shinyjs::show("jeu8x8")
-    shinyjs::hide("jeu4x4")
-    shinyjs::hide("choix_taille")
+    hide("jeu6x6")
+    show("jeu8x8")
+    hide("jeu4x4")
+    hide("choix_taille")
+    show("chrono_page")
+    show("verification")
+    show("résultat")
     nRows(8)
     rv$grille <- NULL
     rv$verrouillees <- NULL
@@ -264,29 +306,25 @@ server <- function(input, output, session) {
     output$timer <- renderText({
       req(debut_temps(), depart_chrono())  # Assure que la partie a commencé et que le chrono tourne
       invalidateLater(1000, session)  # Met à jour chaque seconde
-      
       temps_ecoule <- as.integer(difftime(Sys.time(), debut_temps(), units = "secs"))
       heures <- temps_ecoule %/% 3600
       minutes <- (temps_ecoule %% 3600) %/% 60
       secondes <- temps_ecoule %% 60
-      
       sprintf("%02d:%02d:%02d", heures, minutes, secondes)
     })
   })
   
   observeEvent(input$niveau, {
-    debut_temps(NULL)  # Supprime le temps de début
-    depart_chrono(FALSE)  # Arrête le chrono
-    output$timer <- renderText({ "00:00:00" })  # Remet l'affichage à zéro
-    # Réinitialisation de la grille à vide
-    rv$grille <- NULL  # Grille vide
-    rv$verrouillees <- NULL  # Tout déverrouiller
+    debut_temps(NULL)  
+    depart_chrono(FALSE) 
+    output$timer <- renderText({ "00:00:00" })  
+    rv$grille <- NULL  
+    rv$verrouillees <- NULL  
   })
-
 
   # Gestion musique
   musique_en_pause <- reactiveVal(FALSE)
-
+  
   observeEvent(input$toggle_music, {
     if (musique_en_pause()) {
       runjs("
@@ -324,6 +362,8 @@ server <- function(input, output, session) {
     }
   })
   
+  
+  
   remove_all_observers <- function() {
     lapply(1:nRows(), function(i) {
       lapply(1:nCols(), function(j) {
@@ -332,7 +372,6 @@ server <- function(input, output, session) {
       })
     })
   }
-
   observe({
     # Suppression des anciens observateurs avant d'en ajouter de nouveaux
     lapply(1:nRows(), function(i) {
