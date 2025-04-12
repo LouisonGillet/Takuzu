@@ -193,8 +193,9 @@ ui <- fluidPage(
   # Panneau choix grilles
   hidden(
     div(id = "choix_taille",
+        style = "font-family: 'Georgia', serif;",
         h1("Choisissez la taille de la grille",
-           style = "font-size: 50px; font-weight: bold; text-align: center; color: #333; margin-top: 50px; font-family: 'Georgia', serif;"),
+           style = "font-size: 50px; font-weight: bold; text-align: center; color: #333; margin-top: 50px;"),
 
         # Conteneur des boutons en colonne
         div(style = "display: flex; flex-direction: column; align-items: center; gap: 20px; margin-top: 50px;",
@@ -214,6 +215,7 @@ ui <- fluidPage(
   # Interface de jeu 8x8
   hidden(
     div(id = "jeu8x8",
+        style = "font-family: 'Georgia', serif;",
         titlePanel(h1("Jeu du Takuzu en 8x8", class = "title-text")),
         div(
           style = "position: absolute; bottom: 20px; right: 20px; display: flex; gap: 10px;",
@@ -237,6 +239,7 @@ ui <- fluidPage(
   # Interface de jeu 6x6
   hidden(
     div(id = "jeu6x6",
+        style = "font-family: 'Georgia', serif;",
         titlePanel(h1("Jeu du Takuzu en 6x6", class = "title-text")),
         div(
           style = "position: absolute; bottom: 20px; right: 20px; display: flex; gap: 10px;",
@@ -260,6 +263,7 @@ ui <- fluidPage(
   # Interface de jeu 4x4
   hidden(
     div(id = "jeu4x4",
+        style = "font-family: 'Georgia', serif;",
         titlePanel(h1("Jeu du Takuzu en 4x4", class = "title-text")),
         div(
           style = "position: absolute; bottom: 20px; right: 20px; display: flex; gap: 10px;",
@@ -294,21 +298,28 @@ ui <- fluidPage(
     div(
       id = "résultat",
       style = "
-        bottom: 20px;
-        left: 100px;
-        width: 200px;
-        height: 200px;
-        background-color: #f0f0f0;
-        border: 2px solid #ccc;
-        border-radius: 15px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        padding: 10px;
-        text-align: center;
-      ",
-      h3("Résultat", style = "font-size: 18px; color: #333;"),
+      font-family: 'Georgia', serif;
+      position: fixed;
+      bottom: 160px;
+      left: 16%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 150px;
+      background-color: #f9f9f9;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      padding: 20px;
+      display: none;
+      z-index: 9997;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    ",
       textOutput("result")
     )
-  ),
+  )
 )
 
 
@@ -416,7 +427,7 @@ server <- function(input, output, session) {
     grille_init = generer_takuzu(nRows(),niveau())
     rv$grille = grille_init
     rv$verrouillees = !is.na(grille_init)
-    output$result = renderText("Nouvelle partie commencée ! Bonne chance ")
+    output$result = renderText("⏳ Partie en cours... Bonne chance !")
     output$timer <- renderText({
       req(debut_temps(), depart_chrono())  # Assure que la partie a commencé et que le chrono tourne
       invalidateLater(1000, session)  # Met à jour chaque seconde
@@ -554,9 +565,14 @@ server <- function(input, output, session) {
     if (message == TRUE) {
       depart_chrono(FALSE)
       delta_temps = difftime(Sys.time(), debut_temps(), units = "secs")
-      output$timer = renderText({paste("Temps écoulé :", round(delta_temps), "secondes")})
+      output$timer <- renderText({
+        temps_ecoule <- as.integer(difftime(Sys.time(), debut_temps(), units = "secs"))
+        heures <- temps_ecoule %/% 3600
+        minutes <- (temps_ecoule %% 3600) %/% 60
+        secondes <- temps_ecoule %% 60
+        sprintf("%02d:%02d:%02d", heures, minutes, secondes)
+      })
       output$result = renderText(" 🎉 Bravo, vous avez réussi !")
-      easyClose = TRUE
     }
   })
 }
