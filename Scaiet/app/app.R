@@ -36,7 +36,33 @@ ui <- fluidPage(
         50% { transform: scale(1.2); }
         100% { transform: scale(1); }
       }
-    "))
+
+      #chrono_page {
+      position: fixed;
+      top: 300px; /* Ajuster pour placer sous la sidebar */
+      left: 16%;
+      transform: translateX(-50%);
+      background-color: rgba(0, 0, 0, 0.6);
+      border-radius: 10px;
+      padding: 15px;
+      color: white;
+      font-size: 32px;
+      font-family: 'Courier New', Courier, monospace;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      z-index: 9997;
+      }
+
+      #chrono_page:hover {
+        background-color: rgba(0, 0, 0, 0.8);
+      }
+
+      #chrono_page .timer-text {
+        font-size: 36px;
+        font-weight: bold;
+        color: #ff6f61;
+        text-align: center;
+      }
+      "))
   ),
 
   # Balise audio
@@ -75,7 +101,7 @@ ui <- fluidPage(
       actionButton("toggle_music", "⏸️ Stopper", style = "width: 100%;"),
       br(), br(),
       selectInput("select_music", "Choisir une musique :",
-                  choices = c("Lofi" = "musique1.mp3", "Traditional Japanese" = "musique2.mp3")),
+                  choices = c("Lofi Beat" = "musique1.mp3", "Ambiant Traditional Japanese" = "musique2.mp3")),
       br(),
       div(
         style = "display: flex; justify-content: center; width: 100%;",
@@ -200,11 +226,6 @@ ui <- fluidPage(
             actionButton("new_game", "Nouvelle Partie"),
             actionButton("check_grid", "Vérifier"),
             br(),
-            div(
-              style = "font-family: 'Courier New', Courier, monospace; padding: 10px; margin-top: 20px; background-color: #f9f9f9; text-align: center;",
-              id = "timer",
-              textOutput("timer")
-            )
           ),
           mainPanel(
             h1(uiOutput("grille_boutons8x8")),
@@ -228,11 +249,6 @@ ui <- fluidPage(
             actionButton("new_game", "Nouvelle Partie"),
             actionButton("check_grid", "Vérifier"),
             br(),
-            div(
-              style = "font-family: 'Courier New', Courier, monospace; padding: 10px; margin-top: 20px; background-color: #f9f9f9; text-align: center;",
-              id = "timer",
-              textOutput("timer")
-            )
           ),
           mainPanel(
             h1(uiOutput("grille_boutons6x6")),
@@ -256,11 +272,6 @@ ui <- fluidPage(
             actionButton("new_game", "Nouvelle Partie"),
             actionButton("check_grid", "Vérifier"),
             br(),
-            div(
-              style = "font-family: 'Courier New', Courier, monospace; padding: 10px; margin-top: 20px; background-color: #f9f9f9; text-align: center;",
-              id = "timer",
-              textOutput("timer")
-            )
           ),
           mainPanel(
             h1(uiOutput("grille_boutons4x4")),
@@ -273,6 +284,7 @@ ui <- fluidPage(
   hidden(
     div(
       id = "chrono_page",
+      class = "timer-text",
       textOutput("timer")
     )
   ),
@@ -345,6 +357,7 @@ server <- function(input, output, session) {
     hide("jeu6x6")
     hide("jeu8x8")
     show("jeu4x4")
+    show("chrono_page")
     show("résultat")
     show("icone_regles")
     nRows(4)
@@ -360,6 +373,7 @@ server <- function(input, output, session) {
     hide("jeu4x4")
     hide("choix_taille")
     show("jeu6x6")
+    show("chrono_page")
     show("résultat")
     show("icone_regles")
     nRows(6)
@@ -375,6 +389,7 @@ server <- function(input, output, session) {
     hide("jeu4x4")
     hide("choix_taille")
     show("jeu8x8")
+    show("chrono_page")
     show("résultat")
     show("icone_regles")
     nRows(8)
