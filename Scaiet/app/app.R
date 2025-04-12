@@ -164,7 +164,7 @@ ui <- fluidPage(
   ),
 
 
-  # Pour la page des tailles
+  # Panneau choix grilles
   hidden(
     div(id = "choix_taille",
         h1("Choisissez la taille de la grille",
@@ -269,6 +269,15 @@ ui <- fluidPage(
     )
   ),
 
+  # Panneau pour le chronomètre
+  hidden(
+    div(
+      id = "chrono_page",
+      textOutput("timer")
+    )
+  ),
+
+  # Panneau pour le résultat
   hidden(
     div(
       id = "résultat",
@@ -294,32 +303,26 @@ ui <- fluidPage(
 server <- function(input, output, session) {
 
   observeEvent(input$start_game, {
-    show("choix_taille")
     hide("accueil")
-    hide("jeu")
+    show("choix_taille")
   })
 
   observeEvent(input$show_about, {
     hide("accueil")
     show("apropos")
-    hide("choix_taille")
-    hide("chrono_page")
-    hide("résultat")
   })
 
   observeEvent(input$back_home, {
-    hide("apropos")
     hide("jeu6x6")
     hide("jeu8x8")
     hide("jeu4x4")
-    hide("accueil")
     hide("icone_regles")
     show("choix_taille")
+    hide("chrono_page")
+    hide("résultat")
     debut_temps(NULL)
     depart_chrono(FALSE)
     output$timer <- renderText({ "00:00:00" })
-    hide("chrono_page")
-    hide("résultat")
   })
 
   observeEvent(input$back_lobby, {
@@ -327,21 +330,21 @@ server <- function(input, output, session) {
     hide("jeu6x6")
     hide("jeu8x8")
     hide("jeu4x4")
-    show("accueil")
     hide("choix_taille")
     hide("icone_regles")
+    hide("chrono_page")
+    hide("résultat")
     debut_temps(NULL)
     depart_chrono(FALSE)
     output$timer <- renderText({ "00:00:00" })
-    hide("chrono_page")
-    hide("résultat")
+    show("accueil")
   })
 
   observeEvent(input$size_4, {
+    hide("choix_taille")
     hide("jeu6x6")
     hide("jeu8x8")
     show("jeu4x4")
-    hide("choix_taille")
     show("résultat")
     show("icone_regles")
     nRows(4)
@@ -353,10 +356,10 @@ server <- function(input, output, session) {
   })
 
   observeEvent(input$size_6, {
-    show("jeu6x6")
     hide("jeu8x8")
     hide("jeu4x4")
     hide("choix_taille")
+    show("jeu6x6")
     show("résultat")
     show("icone_regles")
     nRows(6)
@@ -369,10 +372,9 @@ server <- function(input, output, session) {
 
   observeEvent(input$size_8, {
     hide("jeu6x6")
-    show("jeu8x8")
     hide("jeu4x4")
     hide("choix_taille")
-    show("verification")
+    show("jeu8x8")
     show("résultat")
     show("icone_regles")
     nRows(8)
