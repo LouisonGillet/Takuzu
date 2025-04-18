@@ -1,26 +1,66 @@
-# Takuzu (Binairo)
 
-Le **Takuzu**, aussi appelé **Binairo**, est un jeu de logique combinatoire qui se joue sur une grille carrée, généralement de taille **6 × 6** ou **8 × 8**. Il suit des règles strictes qui rappellent celles du **Sudoku** et des jeux de placement logique.
+# 📦 Takuzu
 
-## Règles du jeu
+Bienvenue dans le package **Scaiet**, une application Shiny ludique pour jouer au jeu de logique Takuzu, avec plusieurs niveaux de difficulté et différentes tailles de grilles.
 
-1. Chaque case de la grille doit être remplie avec un **0** ou un **1**.
-2. Chaque ligne et chaque colonne doivent contenir **autant de 0 que de 1**.
-3. Il est interdit d’avoir **trois 0 ou trois 1 consécutifs** dans une ligne ou une colonne.
-4. **Deux lignes ou deux colonnes identiques sont interdites** dans la même grille.
+# 🚀 Installation
 
-## Stratégies pour résoudre un Takuzu
+## 🔧 Dépendances
 
-### 1. Détecter les triples
-Si deux **0** ou deux **1** se suivent, la case suivante doit forcément contenir l’autre chiffre.
+Ce package dépend principalement de :
+- `shiny`
+- `shinyjs`
+- `shinythemes`
+- `shinyWidgets`
+- `shinyalert`
 
-### 2. Équilibrer les 0 et les 1
-Une ligne ou une colonne ne peut pas contenir plus de **la moitié des cases** d’un même chiffre.
+Avant l'installation de notre package **Scaiet**, assurez vous d'avoir installé les dépendances nécessaires. 
+Pour cela, rentrez la commande suivante dans votre console: 
 
-### 3. Comparer les lignes et colonnes déjà complétées
-Si une ligne ou une colonne est presque remplie et qu’une autre est similaire, il faut ajuster les chiffres pour éviter les doublons.
+````r
+install.packages(c("devtools", "shiny", "shinyjs", "shinythemes", "shinyWidgets", "shinyalert"))
+```
 
-## Pourquoi jouer au Takuzu ?
-Le Takuzu est un excellent jeu pour **faire travailler la logique et la réflexion**. Il est accessible à tous et propose une **difficulté progressive** en fonction de la taille de la grille et de la complexité des configurations initiales.
+## 💡 Pré-requis 
 
-Bon jeu ! 🎲
+L'installation du package nécessite le package `devtools`. De la même manière, rentrez la commande suivante dans votre console pour l'installer : 
+
+```r
+install.packages("devtools")  
+```
+
+Ensuite, vous pouvez installer notre package **Scaiet** directement depuis GitHub :
+
+```r
+devtools::install_github("https://github.com/LouisonGillet/Takuzu")
+```
+
+## 🧠 Lancer l'application Shiny
+
+Une fois le package installé, vous pouvez lancer l'application Takuzu avec la fonction `run_app()` :
+
+```r
+library(takuzu)
+run_app()
+```
+
+Cela ouvrira automatiquement l’interface depuis RStudio.
+
+# 📚 Documentation
+
+Une documentation complète des fonctions exportées du package est disponible. Par exemple :
+
+```r
+?generer_takuzu
+```
+
+Vous pouvez également parcourir la documentation générée dans l’onglet **Help** de RStudio après avoir chargé le package.
+
+# 👥 Auteurs
+
+Ce package a été développé dans le cadre de l'UE HAX815X - Programmation R de l'université de Montpellier, par : 
+- **Scaia Matteo** : matteo.scaia@etu.umontpellier.fr
+- **Gillet Louison** : louison.gillet@etu.umontpellier.fr
+
+---
+

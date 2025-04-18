@@ -2,4 +2,5 @@
 
 export(choisir_difficulte)
 export(generer_takuzu)
+export(run_app)
 export(verifier_grille)
