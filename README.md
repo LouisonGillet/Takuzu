@@ -29,10 +29,33 @@ L'installation du package nécessite le package `devtools`. De la même manière
 install.packages("devtools")  
 ```
 
-Ensuite, vous pouvez installer notre package **Scaiet** directement depuis GitHub :
+Ensuite, vous pouvez cloner notre GitHub :
+
+```bash
+git clone https://github.com/LouisonGillet/Takuzu.git
+```
+
+## 💻 Installation
+
+Après avoir cloné le dépôt, vous pouvez installer le package localement avec devtools::install_local(). Cela te permettra d'installer la version locale du package Scaiet directement à partir du dossier cloné.
+
+Dans la console R, entre la commande suivante :
 
 ```r
-devtools::install_github("https://github.com/LouisonGillet/Takuzu")
+devtools::install_local("./Takuzu/Scaiet", force = TRUE)
+```
+Le paramètre force = TRUE garantit que l'installation se fait même si une version antérieure est déjà installée.
+
+Maintenant que le package est installé, changer de répertoire de travail pour le dossier où le projet a été cloné. Cela garantit que les chemins relatifs fonctionneront correctement.
+
+```r
+setwd("./Takuzu")
+```
+
+Une fois que vous êtes dans le bon répertoire, charger le package Scaiet en utilisant la fonction library().
+
+```r
+library(Scaiet)
 ```
 
 ## 🧠 Lancer l'application Shiny
@@ -44,6 +67,11 @@ library(takuzu)
 run_app()
 ```
 
+ou
+
+```r
+Scaiet::run_app()
+```
 Cela ouvrira automatiquement l’interface depuis RStudio.
 
 # 📚 Documentation
