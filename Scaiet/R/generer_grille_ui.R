@@ -1,3 +1,28 @@
+#' Génère une grille interactive sous forme d'interface utilisateur Shiny
+#'
+#' Cette fonction crée une interface utilisateur en grille utilisant des boutons 
+#' interactifs (`actionButton`) disposés selon un nombre de lignes et de colonnes spécifié. 
+#' Elle inclut également les étiquettes de lignes (numéros) et de colonnes (lettres).
+#'
+#' Chaque bouton affiche une valeur provenant d'une matrice réactive et peut être désactivé 
+#' selon une matrice de verrouillage. Elle est conçue pour être utilisée dans une application 
+#' Shiny, notamment pour des jeux ou interfaces de saisie.
+#'
+#' @param nRows Integer. Le nombre de lignes de la grille.
+#' @param nCols Integer. Le nombre de colonnes de la grille.
+#' @param rv ReactiveValues. Un objet réactif contenant au minimum :
+#' \describe{
+#'   \item{\code{grille}}{Une matrice de caractères ou de valeurs à afficher sur les boutons.}
+#'   \item{\code{verrouillees}}{Une matrice booléenne de même dimension que \code{grille}, 
+#'   indiquant quelles cases sont désactivées (\code{TRUE} pour désactivé).}
+#' }
+#'
+#' @return Un objet UI Shiny (`tagList`) contenant la grille complète, prête à être insérée 
+#' dans l'UI d'une application Shiny.
+#'
+#' @import shiny
+#' @export
+#'
 generer_grille_ui <- function(nRows, nCols, rv) {
   # Générer les étiquettes de colonnes (A, B, C, ...)
   lettres_colonnes <- LETTERS[1:nCols]
