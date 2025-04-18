@@ -11,8 +11,7 @@ Aucune valeur de retour. Cette fonction a pour effet de démarrer une session Sh
 }
 \description{
 Cette fonction permet de lancer l'application Shiny embarquée dans le package.
-Elle recherche automatiquement le répertoire contenant l'application
-et l'exécute via `shiny::runApp()`. Elle est destinée à être utilisée par l'utilisateur
+L'exécute via `shiny::runApp()`. Elle est destinée à être utilisée par l'utilisateur
 final du package.
 }
 \examples{
