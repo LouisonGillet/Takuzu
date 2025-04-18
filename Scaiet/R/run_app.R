@@ -16,9 +16,11 @@
 #' @export
 
 run_app <- function() {
-  appDir <- system.file("app", package = "Scaiet")
-  if (appDir == "") {
-    stop("Impossible de trouver le dossier de l'application. Vérifiez que le package est bien installé.")
+  appDir <- "./Scaiet/app/app.R"
+  
+  if (!dir.exists(appDir)) {
+    stop("Le dossier de l'application est introuvable : ", appDir)
   }
+  
   shiny::runApp(appDir, display.mode = "normal")
 }
