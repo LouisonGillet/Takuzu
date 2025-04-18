@@ -37,9 +37,9 @@ git clone https://github.com/LouisonGillet/Takuzu.git
 
 ## 💻 Installation
 
-Après avoir cloné le dépôt, vous pouvez installer le package localement avec devtools::install_local(). Cela te permettra d'installer la version locale du package Scaiet directement à partir du dossier cloné.
+Après avoir cloné le dépôt, vous pouvez installer le package localement avec devtools::install_local(). Cela permet d'installer la version locale du package Scaiet directement à partir du dossier cloné.
 
-Dans la console R, entre la commande suivante :
+Dans la console R, entrer commande suivante :
 
 ```r
 devtools::install_local("./Takuzu/Scaiet", force = TRUE)
