@@ -2,18 +2,25 @@
 % Please edit documentation in R/generer_takuzu.R
 \name{generer_takuzu}
 \alias{generer_takuzu}
-\title{Génère une grille Takuzu valide avec un niveau de difficulté donné}
+\title{Génération d'une grille de Takuzu valide}
 \usage{
 generer_takuzu(taille, niveau)
 }
 \arguments{
-\item{taille}{Un entier pair représentant la taille de la grille (ex: 6, 8, 10).}
+\item{taille}{Un entier pair représentant la taille de la grille (ex. 6, 8, 10).}
 
-\item{niveau}{Un caractère indiquant le niveau de difficulté : "facile", "moyen", ou "difficile".}
+\item{niveau}{Une chaîne de caractères indiquant le niveau de difficulté : "facile", "moyen", "difficile" ou "Einstein".}
 }
 \value{
-Une matrice de taille x taille contenant la grille Takuzu avec certaines cases vides.
+Une matrice de taille `taille` x `taille` contenant des 0, 1 et `NA` pour les cases à remplir par le joueur.
 }
 \description{
-Génère une grille Takuzu valide avec un niveau de difficulté donné
+Cette fonction génère une grille de Takuzu (aussi appelé Binairo) valide de dimension `taille` x `taille`.
+La grille respecte toutes les règles du jeu : 
+- Pas plus de deux chiffres identiques consécutifs (horizontalement ou verticalement)
+- Autant de 0 que de 1 par ligne et colonne
+- Aucune ligne ou colonne identique à une autre
+}
+\details{
+La grille est d'abord générée complètement par backtracking, puis un certain nombre de cases sont supprimées selon le niveau de difficulté spécifié.
 }
