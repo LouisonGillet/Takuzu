@@ -17,7 +17,7 @@ Ce package dépend principalement de :
 Avant l'installation de notre package **Scaiet**, assurez vous d'avoir installé les dépendances nécessaires. 
 Pour cela, rentrez la commande suivante dans votre console: 
 
-````r
+```r
 install.packages(c("devtools", "shiny", "shinyjs", "shinythemes", "shinyWidgets", "shinyalert"))
 ```
 
